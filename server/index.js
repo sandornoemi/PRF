@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path')
 
 //var bookController = require('./router/book');
 require('./models/books');
@@ -23,20 +24,25 @@ mongoose.connection.on('error', function(error) {
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 //app.use(cors({ origin: 'http://localhost:4200' }));
-//app.use(cors());
+app.use(cors());
 
-var whitelist = ['http://localhost:4200']
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true
-}
-app.use(cors, corsOptions)
+//var whitelist = ['http://localhost:4200']
+//var corsOptions = {
+//  origin: function (origin, callback) {
+//    if (whitelist.indexOf(origin) !== -1) {
+//      callback(null, true)
+ //   } else {
+ //     callback(new Error('Not allowed by CORS'))
+//    }
+//  },
+//  credentials: true
+//}
+//app.use(cors, corsOptions)
+
+app.use(express.static(path.join(__dirname, 'dist')))
+.set('views', path.join(__dirname, 'dist'))
+.set('view engine', 'ejs')
+.get('/', (req, res) => res.render('pages/index'))
 
 app.use('/books', require('./router/book'));
 
